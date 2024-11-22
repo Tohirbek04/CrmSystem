@@ -1,0 +1,40 @@
+/etc/systemd/system/test.service
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/var/www/test
+ExecStart=/var/www/test/.venv/bin/gunicorn --workers 1 --bind unix:/var/www/test/social.sock root.wsgi:application
+
+
+
+-----------------------------------------------------------------------------------------------------
+/etc/nginx/sites-available/test
+ln -s /etc/nginx/sites-available/(nginx_file_nomi) /etc/nginx/sites-enabled/(nginx_file_nomi)
+/etc/nginx/sites-enabled/test12
+
+
+server {
+    listen       80;
+    server_name  206.189.36.11;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        root /var/www/test;
+    }
+
+    location /media/ {
+        root /var/www/test;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/var/www/test/social.sock;
+        # proxy_pass http://localhost:8000;
+    }
+
+}
